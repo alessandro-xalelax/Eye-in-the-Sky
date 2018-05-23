@@ -1,7 +1,9 @@
 import sys
 import time
 import telepot
+import io
 from telepot.loop import MessageLoop
+import matplotlib.pyplot as plt
 
 """
 usage: $ python eyeinthesky.py <token> <ownerId>
@@ -16,10 +18,19 @@ def handle(msg):
     command = msg['text']
     if chat_id != ownerId:
         bot.sendMessage(chat_id, "Sorry, you can not control me.")
+        bot.sendMessage(ownerId, "Somebody contacted me; Id = " + str(chat_id))
         return
-    if command == "\temp":
-        bot.sendMessage(chat_id, "Temperature = ")
-    elif command == "\pic":
+    if command == "/start":
+        bot.sendMessage(chat_id, "Hi, master")
+    if command == "/temp":
+        buffer = io.BytesIO()
+        plt.plot([1, 2, 3, 4])
+        plt.ylabel('some numbers')
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        bot.sendPhoto(chat_id, buffer, "Current temperature = ...\n" +
+                                       "humidity = ...             ")
+    elif command == "/pic":
         bot.sendMessage(chat_id, "Sending picture")
     else:
         bot.sendMessage(chat_id, "Huh???")
