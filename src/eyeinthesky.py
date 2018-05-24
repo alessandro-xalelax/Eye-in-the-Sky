@@ -3,6 +3,8 @@ import time
 import telepot
 import io
 from telepot.loop import MessageLoop
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 """
