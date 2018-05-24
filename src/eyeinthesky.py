@@ -36,15 +36,18 @@ def handle(msg):
         bot.sendPhoto(chat_id, buffer, "Current temperature = ...\n" +
                                        "humidity = ...             ")
     elif command == "/pic":
+        cam = VideoCapture(0)
         readSuccessful, img = cam.read()
 	if readSuccessful:
+            RGB_img = cvtColor(img, COLOR_BGR2RGB)
             buffer = io.BytesIO()
-            image = Image.fromarray(img)
+            image = Image.fromarray(RGB_img)
             image.save(buffer, format = "PNG")
             buffer.seek(0)
             bot.sendPhoto(chat_id, buffer)
         else:
             bot.sendMessage(chat_id, "Webcam error")
+        cam.release()
     else:
         bot.sendMessage(chat_id, "Huh???")
 
@@ -55,8 +58,6 @@ try:
 except IndexError:
     print("Initialization error")
     sys.exit(0)
-
-cam = VideoCapture(0)
 
 bot = telepot.Bot(token)
 bot.getMe()
