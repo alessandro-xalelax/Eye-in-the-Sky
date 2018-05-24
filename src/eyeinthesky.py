@@ -3,6 +3,7 @@ import time
 import Image
 import telepot
 import io
+import numpy as np
 from telepot.loop import MessageLoop
 from cv2 import *
 import matplotlib
@@ -17,6 +18,12 @@ This bot will reply only to a single owner.
 """
 
 
+def gamma_correction(img, correction):
+        img = img/255.0
+        img = pow(img, correction)
+        return np.uint8(img*255)
+
+    
 def handle(msg):
     chat_id = msg['chat']['id']
     command = msg['text']
@@ -38,7 +45,8 @@ def handle(msg):
     elif command == "/pic":
         cam = VideoCapture(0)
         readSuccessful, img = cam.read()
-	if readSuccessful:
+        if readSuccessful:
+            img = gamma_correction(img, 2.3)
             RGB_img = cvtColor(img, COLOR_BGR2RGB)
             buffer = io.BytesIO()
             image = Image.fromarray(RGB_img)
