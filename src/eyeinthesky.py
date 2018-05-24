@@ -1,5 +1,6 @@
 import sys
 import time
+import Image
 import telepot
 import io
 from telepot.loop import MessageLoop
@@ -26,6 +27,7 @@ def handle(msg):
     if command == "/start":
         bot.sendMessage(chat_id, "Hi, master")
     if command == "/temp":
+        plt.gcf().clear()
         buffer = io.BytesIO()
         plt.plot([1, 2, 3, 4])
         plt.ylabel('some numbers')
@@ -34,8 +36,15 @@ def handle(msg):
         bot.sendPhoto(chat_id, buffer, "Current temperature = ...\n" +
                                        "humidity = ...             ")
     elif command == "/pic":
-        s, img = cam.read()
-        bot.sendPhoto(chat_id, img)
+        readSuccessful, img = cam.read()
+	if readSuccessful:
+            buffer = io.BytesIO()
+            image = Image.fromarray(img)
+            image.save(buffer, format = "PNG")
+            buffer.seek(0)
+            bot.sendPhoto(chat_id, buffer)
+        else:
+            bot.sendMessage(chat_id, "Webcam error")
     else:
         bot.sendMessage(chat_id, "Huh???")
 
@@ -47,7 +56,7 @@ except IndexError:
     print("Initialization error")
     sys.exit(0)
 
-cam = cv.VideoCapture(0)
+cam = VideoCapture(0)
 
 bot = telepot.Bot(token)
 bot.getMe()
