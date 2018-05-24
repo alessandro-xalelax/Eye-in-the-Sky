@@ -3,6 +3,7 @@ import time
 import telepot
 import io
 from telepot.loop import MessageLoop
+from cv2 import *
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
@@ -33,7 +34,8 @@ def handle(msg):
         bot.sendPhoto(chat_id, buffer, "Current temperature = ...\n" +
                                        "humidity = ...             ")
     elif command == "/pic":
-        bot.sendMessage(chat_id, "Sending picture")
+        s, img = cam.read()
+        bot.sendPhoto(chat_id, img)
     else:
         bot.sendMessage(chat_id, "Huh???")
 
@@ -44,6 +46,8 @@ try:
 except IndexError:
     print("Initialization error")
     sys.exit(0)
+
+cam = cv.VideoCapture(0)
 
 bot = telepot.Bot(token)
 bot.getMe()
